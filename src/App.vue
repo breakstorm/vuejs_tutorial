@@ -1,17 +1,19 @@
 <template>
   <div id="app">
+    <input type='text' v-model='postBody' v-on:change='postPost()'>
     <button>just HTML TAG</button>
     <local-component></local-component>
     <global-component></global-component>
+    <ul v-if='errors && errors.length'>
+      <li v-for='error in errors'>{{ error.message }}</li>
+    </ul>
     <ul v-if='posts && posts.length'>
       <li v-for='post in posts'>
         <p><strong>{{ post.title }}</strong></p>
         <p>{{ post.body }}</p>
       </li>
     </ul>
-    <ul v-if='errors && errors.length'>
-      <li v-for='error in errors'>{{ error.message }}</li>
-    </ul>
+    
   </div>
 </template>
 
@@ -37,10 +39,17 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App',
       posts: [],
-      error: []
+      errors: [],
+      postBody: ''
     }
   },
   created () {
+    // try {
+    //   const response = await axios.get('http://jsonplaceholder.typicode.com/posts')
+    //   this.posts = response.data
+    // } catch (e) {
+    //   this.errors.push(e)
+    // }
     axios.get('http://jsonplaceholder.typicode.com/posts')
     .then(response => {
       this.posts = response.data
@@ -48,6 +57,27 @@ export default {
     .catch(e => {
       this.errors.push(e);
     })
+  },
+  methods: {
+    // async postPost () {
+    //   console.log('hello')
+    //   const response = await axios.post('http://jsonplaceholder.typicode.com/posts', {
+    //       body: this.postBody
+    //     })
+    //   if(!response) this.errors.push(e)
+    //   console.log(response)
+    // }
+    postPost() {
+      axios.post(`http://jsonplaceholder.typicode.com/posts`, {
+        body: this.postBody
+      })
+      .then(response => {
+        console.log(response)
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
+    }
   }
 }
 </script>
